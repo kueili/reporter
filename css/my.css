@@ -1,0 +1,81 @@
+@media only screen and (min-width: 280px) and (max-width: 780px) {
+  /*瀏覽區域寬度範圍在321px~768px，則下方CSS描述會立即被套用 */
+  .fot { /*頁尾下方的文字縮小一些 */
+    font-size: 0.7rem;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+}
+
+body {
+  font-family: 微軟正黑體;
+  background-color: #fcf9f9;
+  font-size: 1.0rem;
+}
+/*取消超連結的底線 */
+
+a:hover {
+  color: rgb(40, 129, 230);
+  text-decoration: none;
+}
+
+.post_time {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: #0f97b9;
+  margin: 16px 10px;
+}
+/* 11/23 下面加入標題限制行數 */
+.multi_ellipsis {
+  /*  display: block;  如果不是區塊元素的話，要加這一行 */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; /*  N 填入要顯示的行數 */
+  line-height: 34px; /*X 填入行高 px 值 */
+  height: 46px; /* 限定高度為 X * N 的 */
+}
+
+.img-container {
+  width: 100%;
+  height: 800px;
+  background-color: #000;
+  background-image: url('../images/pic2.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: left center;
+  color: white;
+}
+
+nav {
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 1);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+img.cover {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background-color: #000;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+footer {
+  font-size: 0.8rem;
+}
+
+footer a {
+  font-size: 0.8rem;
+  color: #fff;
+}
+
+footer a:hover {
+  color: #fff;
+}
+
+.footer {
+  margin-top: 100px;
+}
+

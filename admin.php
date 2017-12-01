@@ -1,0 +1,113 @@
+<?php
+require "loginheader.php";
+require_once 'header.php';
+$page_title = '管理頁面';
+//判斷是否有op值?有的話就過濾資料
+$op = isset($_REQUEST['op']) ? filter_var($_REQUEST['op']) : '';
+// 判斷是否有sn值?有的話強制轉換整數值
+$sn = isset($_REQUEST['sn']) ? (int) $_REQUEST['sn'] : 0;
+switch ($op) {
+//新增文章
+    case 'insert':
+        $sn = insert_article();
+        header("location: index.php?sn={$sn}");
+        exit;
+//刪除文章
+    case 'delete_article':
+        delete_article($sn);
+        header("location: index.php");
+        exit;
+//顯示所有文章
+    case "article_form":
+        break;
+//修改資料
+    case "modify_article":
+        show_article($sn);
+        break;
+//更新資料
+    case 'update':
+        update_article($sn);
+        header("location: index.php?sn={$sn}");
+        exit;
+
+    default:
+        $op = "";
+        break;
+}
+
+require_once 'footer.php';
+
+/*************函數區**************/
+
+//儲存文章
+function insert_article()
+{
+    global $db;
+    $title    = $db->real_escape_string($_POST['title']);
+    $content  = $db->real_escape_string($_POST['content']);
+    $username = $db->real_escape_string($_POST['username']);
+
+    $sql = "INSERT INTO `article` (`title`, `content`, `username`, `create_time`, `update_time`) VALUES ('{$title}', '{$content}', '{$username}', NOW(), NOW())";
+    $db->query($sql) or die($db->error);
+    $sn = $db->insert_id;
+
+    upload_pic($sn);
+
+    return $sn;
+}
+//刪除文章
+function delete_article($sn)
+{
+    global $db;
+
+    $sql = "DELETE FROM `article` WHERE sn='{$sn}' and username='{$_SESSION['username']}'";
+    $db->query($sql) or die($db->error);
+
+    if (file_exists("uploads/cover_{$sn}.png")) {
+        unlink("uploads/cover_{$sn}.png");
+        unlink("uploads/thumb_{$sn}.png");
+    }
+}
+
+//更新文章
+function update_article($sn)
+{
+    global $db;
+    $title    = $db->real_escape_string($_POST['title']);
+    $content  = $db->real_escape_string($_POST['content']);
+    $username = $db->real_escape_string($_POST['username']);
+
+    $sql = "UPDATE `article` SET `title`='{$title}', `content`='{$content}', `update_time`= NOW() WHERE `sn`='{$sn}' and username='{$_SESSION['username']}'";
+    $db->query($sql) or die($db->error);
+
+    upload_pic($sn);
+
+    return $sn;
+}
+
+//上傳團片
+function upload_pic($sn)
+{
+
+    if (isset($_FILES)) {
+        require_once 'class.upload.php';
+        $foo = new Upload($_FILES['pic']);
+        if ($foo->uploaded) {
+            // save uploaded image with a new name
+            $foo->file_new_name_body = 'cover_' . $sn;
+            $foo->image_resize       = true;
+            $foo->image_convert      = png;
+            $foo->image_x            = 1200;
+            $foo->image_ratio_y      = true;
+            $foo->Process('uploads/');
+            if ($foo->processed) {
+                $foo->file_new_name_body = 'thumb_' . $sn;
+                $foo->image_resize       = true;
+                $foo->image_convert      = png;
+                $foo->image_x            = 400;
+                $foo->image_ratio_y      = true;
+                $foo->Process('uploads/');
+            }
+        }
+    }
+}
